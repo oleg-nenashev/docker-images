@@ -45,26 +45,19 @@ ARG TAPPY_VERSION=2.1
 RUN apt-get update && apt-get install -y \
     python2.7-dev libyaml-dev libyaml-dev python-pip python-yaml git libelf-dev \
     autoconf gperf bison flex build-essential clang libreadline-dev gawk tcl-dev \
-    libffi-dev mercurial graphviz xdot pkg-config python3
+    libffi-dev mercurial graphviz xdot pkg-config python3 openjdk-8-jre
 
 # FuseSoC
 ENV FUSESOC_VERSION=${FUSESOC_VERSION}
 
 WORKDIR /usr/src/fusesoc
-RUN git clone https://github.com/olofk/fusesoc.git .
-RUN git checkout ${FUSESOC_VERSION}
-RUN pip install -e .
+RUN git clone https://github.com/olofk/fusesoc.git . && git checkout ${FUSESOC_VERSION} && pip install -e .
 
 # Icarus Verilog
 ENV ICARUS_VERILOG_VERSION=${ICARUS_VERILOG_VERSION}
 
 WORKDIR /usr/src/iverilog
-RUN git clone https://github.com/steveicarus/iverilog.git .
-RUN git checkout v${ICARUS_VERILOG_VERSION}
-RUN sh autoconf.sh
-RUN ./configure
-RUN make
-RUN make install
+RUN git clone https://github.com/steveicarus/iverilog.git . && git checkout v${ICARUS_VERILOG_VERSION} && sh autoconf.sh && ./configure && make && make install
 
 # Verilator
 ENV VERILATOR_VERSION=${VERILATOR_VERSION}
@@ -72,19 +65,11 @@ ENV VERILATOR_VERSION=${VERILATOR_VERSION}
 WORKDIR /usr/src/verilator
 RUN git clone http://git.veripool.org/git/verilator .
 RUN git checkout verilator_`echo "${VERILATOR_VERSION}" | tr '.' '_'`
-RUN autoconf
-RUN ./configure
-RUN make
-RUN make install
+RUN autoconf && ./configure && make && make install
 
 # Yosys
 WORKDIR /usr/src/yosys
-RUN git clone http://github.com/cliffordwolf/yosys.git .
-RUN git checkout yosys-${YOSYS_VERSION}
-RUN make config-gcc
-RUN make
-RUN make install
+RUN git clone http://github.com/cliffordwolf/yosys.git . && git checkout yosys-${YOSYS_VERSION} && make config-gcc && make && make install
 
 # pytest, nose and tappy
-RUN pip install pytest==${PYTEST_VERSION}
-RUN pip install tap.py==${TAPPY_VERSION}
+RUN pip install pytest==${PYTEST_VERSION} && pip install tap.py==${TAPPY_VERSION}
